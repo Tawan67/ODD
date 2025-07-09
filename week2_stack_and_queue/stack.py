@@ -11,7 +11,10 @@ class Stack:
         
     @property
     def pop_item(self):
-        return self.items.pop()
+        if len(self.items):
+            return self.items.pop()
+        print("Can't Pop It's Out of Range")
+        return None
     @property
     def peek(self):
         return self.items[-1]
@@ -28,6 +31,8 @@ class Stack:
             s += str(i)+" "
         return s
     
-    
-s=Stack(["lemon","ice"])
-print(s)
+  
+# s=Stack(["lemon","ice"])
+# print(s)
+# s.push("pop")
+# print(s)
