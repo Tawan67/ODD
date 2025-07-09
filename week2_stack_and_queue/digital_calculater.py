@@ -63,6 +63,7 @@ def postfix_form(equation):
             if oper.isEmpty and i !='.': # operation ว่าง
                 oper.push(i)
             elif i !='.' and custom_order[oper.peek] < custom_order[i]: # * ทับ + == เอา เลข ออก เก็บ บวก
+                
                 anwser.append(num.pop_item)
                 oper.push(i)
                 # print(oper)
@@ -71,6 +72,7 @@ def postfix_form(equation):
                 anwser.append(oper.pop_item)
                 if not oper.isEmpty: anwser.append(oper.pop_item)
                 if i!= '.':oper.push(i)
+        
             elif i !='.' and custom_order[oper.peek] == custom_order[i]: # + เจอ +
                 anwser.append(num.pop_item)
                 anwser.append(oper.pop_item)
@@ -78,9 +80,32 @@ def postfix_form(equation):
             elif i =='.' :
                 anwser.append(num.pop_item)
                 anwser.append(oper.pop_item)
+                while not oper.isEmpty:
+                    anwser.append(oper.pop_item)
     return anwser
+
+def cal(equa:list):
+    num = [str(j) for j in range(10)]
+    num_stack = Stack()
+    for i in equa:
+        if i in num:
+            num_stack.push(int(i))
+        else:
+            b = num_stack.pop_item
+            a = num_stack.pop_item
+            if i =='+':
+                num_stack.push(a+b)
+            if i =='-':
+                num_stack.push(a-b)
+            if i =='*':
+                num_stack.push(a*b)
+            if i =='/':
+                num_stack.push(a/b)
+    return num_stack.pop_item
         
+      
 
 equa = input("Input Your Eqution :")
 result = postfix_form(equa)
 print(result)
+print(cal(result))
