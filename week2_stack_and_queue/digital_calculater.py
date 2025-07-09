@@ -3,6 +3,8 @@ from stack import Stack
 
 def check_equa(equa):
     equa = [i for i in equa if i != " "]
+    if len(equa)<=1:
+        return 0
     open=Stack()
     num = [str(j) for j in range(10)]
     open_text = ['(','{','[']
