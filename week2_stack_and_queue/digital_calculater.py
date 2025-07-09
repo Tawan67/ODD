@@ -39,6 +39,7 @@ def postfix_form(equation):
     open_text = ['(','{','[']
     close_text = [')','}',']']
     custom_order = {}
+    custom_order_inside = custom_order.copy
     for i in number:
         custom_order[i]=0
     for i in oper_1:
@@ -49,9 +50,13 @@ def postfix_form(equation):
         custom_order[i]=3
     for i in close_text:
         custom_order[i]=4
+    custom_order_inside = custom_order.copy()
+    for i in open_text:
+        custom_order_inside[i]=0
     num = Stack()
     oper = Stack()
     anwser = list()
+    buffer = custom_order.copy()
     for i in equa:
         if i in number:
             if num.isEmpty:
@@ -60,28 +65,70 @@ def postfix_form(equation):
                 anwser.append(num.pop_item)
                 num.push(i)
         else:
-            if oper.isEmpty and i !='.': # operation ว่าง
+            if oper.isEmpty and i!='.' and not(i in open_text): #case first operation except open text
                 oper.push(i)
-            elif i !='.' and custom_order[oper.peek] < custom_order[i]: # * ทับ + == เอา เลข ออก เก็บ บวก
+                anwser.append(num.pop_item)
                 
+            elif  i !='.' and not(oper.isEmpty) and not(i in close_text) and  custom_order[oper.peek] < custom_order[i] and not(i in open_text): # * to + not open text
                 anwser.append(num.pop_item)
                 oper.push(i)
-                # print(oper)
-            elif i !='.' and custom_order[oper.peek] > custom_order[i]:# + ทับ * == เอา เงข ออก * ออก ก่อน * ออก แล้ว add +
+                
+            elif  i !='.' and not(oper.isEmpty) and not(i in close_text) and custom_order[oper.peek] > custom_order[i] and not(i in open_text): # + to * pop-->num,oper,oper...
                 anwser.append(num.pop_item)
                 anwser.append(oper.pop_item)
-                if not oper.isEmpty: anwser.append(oper.pop_item)
-                if i!= '.':oper.push(i)
-        
+                while not(oper.isEmpty) and not(oper.peek in open_text):anwser.append(oper.pop_item)
+                oper.push(i)
+            elif i in open_text:
+                oper.push(i)
+                custom_order=custom_order_inside.copy()
+            elif i in close_text:
+                anwser.append(num.pop_item)
+                if not(oper.peek in open_text):anwser.append(oper.pop_item)
+                while not (oper.peek in open_text) and not(oper.isEmpty):
+                    anwser.append(oper.pop_item)
+                if oper.peek in open_text:
+                    oper.pop_item
+                custom_order = buffer.copy()
             elif i !='.' and custom_order[oper.peek] == custom_order[i]: # + เจอ +
                 anwser.append(num.pop_item)
                 anwser.append(oper.pop_item)
                 if i!= '.':oper.push(i)
-            elif i =='.' :
-                anwser.append(num.pop_item)
-                anwser.append(oper.pop_item)
-                while not oper.isEmpty:
+            elif  i =='.':
+                    anwser.append(num.pop_item)
                     anwser.append(oper.pop_item)
+                    while not oper.isEmpty:
+                        if oper.peek in open_text or oper.peek in close_text:
+                            oper.pop_item
+                        if not(oper.isEmpty):anwser.append(oper.pop_item)
+            
+            # if oper.isEmpty and i !='.': # operation ว่าง
+            #     oper.push(i)
+            # elif i !='.' and custom_order[oper.peek] < custom_order[i] and not (oper.peek in open_text): # * ทับ + == เอา เลข ออก เก็บ บวก  
+            #     anwser.append(num.pop_item)
+            #     oper.push(i)
+            #     # print(oper)
+            # elif i in open_text and not (oper.peek in open_text) :
+            #     anwser.append(num.pop_item)
+            #     anwser.append(oper.pop_item)
+            #     while (not oper.peek in open_text) and not (oper.isEmpty):
+            #         anwser.append(oper.pop_item)
+            #     pass
+            # elif i !='.' and custom_order[oper.peek] > custom_order[i]:# + ทับ * == เอา เงข ออก * ออก ก่อน * ออก แล้ว add +
+            #     anwser.append(num.pop_item)
+            #     anwser.append(oper.pop_item)
+            #     if not oper.isEmpty: anwser.append(oper.pop_item)
+            #     if i!= '.':oper.push(i)
+        
+            # elif i !='.' and custom_order[oper.peek] == custom_order[i]: # + เจอ +
+            #     anwser.append(num.pop_item)
+            #     anwser.append(oper.pop_item)
+            #     if i!= '.':oper.push(i)
+            # elif i =='.' :
+            #     anwser.append(num.pop_item)
+            #     anwser.append(oper.pop_item)
+            #     while not oper.isEmpty:
+            #         anwser.append(oper.pop_item)
+            anwser = [i for i in anwser if i!=None]
     return anwser
 
 def cal(equa:list):
