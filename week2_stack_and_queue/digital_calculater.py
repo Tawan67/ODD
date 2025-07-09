@@ -1,5 +1,31 @@
 from stack import Stack
 
+def formating(equa):
+    sum=""
+    new_equa=[]
+    for i in equa:
+        if i.isnumeric() or i =='.':
+            sum+=i
+        else:
+            if sum != '':new_equa.append(sum)
+            new_equa.append(i)
+            sum = ''
+    new_equa.append(sum)
+    new_equa = [i for i in new_equa if i != '']
+    return new_equa
+
+def is_float(element):
+    if not("." in element):
+        return 0
+    for i in element:
+        if i == '.':
+            initial  = element.index(i)
+            try:
+                if not(element[initial-1].isnumeric() and element[initial+1].isnumeric()):
+                    return 0
+            except:
+                return 0
+    return 1
 
 def check_equa(equa):
     equa = [i for i in equa if i != " "]
@@ -11,7 +37,7 @@ def check_equa(equa):
     close_text = [')','}',']']
     operation = ['+','-','*','/']
     num = num +open_text+close_text
-    all = num+operation
+    all = num+operation+['.']
     
     for i in equa:
         if i in open_text:
@@ -32,6 +58,7 @@ def postfix_form(equation):
     equa = [i for i in equation if i != " "]
     if not check_equa(equa):
         return "Invalid Equation"
+    equa=formating(equa)
     equa+="."
     number = [str(i) for i in range(10)]
     oper_1 = ['+','-']
@@ -58,7 +85,7 @@ def postfix_form(equation):
     anwser = list()
     buffer = custom_order.copy()
     for i in equa:
-        if i in number:
+        if i.isnumeric() or is_float(i):
             if num.isEmpty:
                 num.push(i)
             else:
@@ -75,7 +102,7 @@ def postfix_form(equation):
                 
             elif  i !='.' and not(oper.isEmpty) and not(i in close_text) and custom_order[oper.peek] > custom_order[i] and not(i in open_text): # + to * pop-->num,oper,oper...
                 anwser.append(num.pop_item)
-                anwser.append(oper.pop_item)
+                if not (oper.peek in open_text) :anwser.append(oper.pop_item)
                 while not(oper.isEmpty) and not(oper.peek in open_text):anwser.append(oper.pop_item)
                 oper.push(i)
             elif i in open_text:
@@ -84,9 +111,9 @@ def postfix_form(equation):
             elif i in close_text:
                 anwser.append(num.pop_item)
                 if not(oper.peek in open_text):anwser.append(oper.pop_item)
-                while not (oper.peek in open_text) and not(oper.isEmpty):
+                while not(oper.isEmpty) and not (oper.peek in open_text) :
                     anwser.append(oper.pop_item)
-                if oper.peek in open_text:
+                if not(oper.isEmpty) and oper.peek in open_text:
                     oper.pop_item
                 custom_order = buffer.copy()
             elif i !='.' and custom_order[oper.peek] == custom_order[i]: # + เจอ +
@@ -128,16 +155,22 @@ def postfix_form(equation):
             #     anwser.append(oper.pop_item)
             #     while not oper.isEmpty:
             #         anwser.append(oper.pop_item)
-            anwser = [i for i in anwser if i!=None]
+            anwser = [i for i in anwser if i!= None]
     return anwser
 
 def cal(equa:list):
-    num = [str(j) for j in range(10)]
     num_stack = Stack()
+    if equa =="Invalid Equation":
+        return equa
+    
     for i in equa:
-        if i in num:
-            num_stack.push(int(i))
+        if i.isnumeric() or is_float(i):
+            if is_float(i):
+                num_stack.push(float(i))
+            else:
+                num_stack.push(int(i))
         else:
+            print(num_stack)
             b = num_stack.pop_item
             a = num_stack.pop_item
             if i =='+':
@@ -156,3 +189,4 @@ equa = input("Input Your Eqution :")
 result = postfix_form(equa)
 print(result)
 print(cal(result))
+print((12.90-12)*10/3+12)
