@@ -1,1 +1,0 @@
-oper.peek in open_text
