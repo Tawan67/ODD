@@ -45,6 +45,9 @@ class Stack:
             re_list = []
         self.items = re_list.copy()
     
+    def sort(self):
+        self.items.sort()
+    
 def is_float(element):
     if not("." in element):
         return 0
@@ -58,6 +61,7 @@ def is_float(element):
                 return 0
     return 1
 last = []
+value = 0
 def out(ans:Stack):
     output = ""
     front = ""
@@ -128,3 +132,6 @@ for i in sticks:
     # print(i)
     advice_plate(i)
     # print(f"status = {advice_plate(i)}")
+
+# มีทางแก้ 2 ทางที่คิดไว้ 1 คือทำตัวเก็บค่าก่อนหนเ้าแล้วค่อยมาดูว่าอันไหนจะเอาเข้าหรือเอาออก
+# 2  คือ ไม่ reset ค่าของ ans แล้ว เอาค่า sum ออกมา จากนั้นเอาไปเช็คกับค่า input ว่าขาดหรือเกิน ถ้าขาดให้ push เข้า ถ้าเกิน ให้ pop ออก จนกว่าจะน้อยกว่า แล้วเรียงค่าใน plate 
