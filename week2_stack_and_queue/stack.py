@@ -31,8 +31,3 @@ class Stack:
             s += str(i)+" "
         return s
     
-  
-# s=Stack(["lemon","ice"])
-# print(s)
-# s.push("pop")
-# print(s)
