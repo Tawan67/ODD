@@ -1,1 +1,1 @@
-p_o.sort()
+reset

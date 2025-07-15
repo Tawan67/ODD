@@ -132,7 +132,6 @@ def out(ans:Stack,initial,before:Stack):
     p_u2 = Stack()
     p_u2.reset()
     while not(p_u.isEmpty):
-    
         p_u2.push(p_u.pop_item)
     while not(p_u2.isEmpty):
         front+= "PU:"+str(p_u2.pop_item)+" "
