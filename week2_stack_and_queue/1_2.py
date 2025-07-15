@@ -56,7 +56,17 @@ class Stack:
             store_stack.push(stack.pop_item)
         while not(store_stack.isEmpty):
             stack.push(store_stack.pop_item)
-            
+    def a_del(self,ele):
+        for i in range(len(self.items)):
+            if ele == self.items[i]:
+                self.items.pop(i)
+                return 0
+    def more_then(self,ele):
+        out_list = []
+        for i in self.items:
+            if ele > i:
+                out_list.append(i)
+        return out_list
 def is_float(element):
     if not("." in element):
         return 0
@@ -81,8 +91,7 @@ def reverse(string:str):
 
 def out(ans:Stack,initial,before:Stack):
     # print("start")
-    if ans.sum() > initial:
-        pass
+
     output = ""
     front = ""
     # check = len(last)>0
@@ -100,55 +109,50 @@ def out(ans:Stack,initial,before:Stack):
     while store_2.isEmpty and not(store_1.isEmpty):
         p_u.push(store_1.pop_item)
         front+= "PU:"+str(p_u.pop_item)+" "
+    
+    before1 =Stack()
+    before1.copy(before)
+    current1 =Stack()
+    current1.copy(ans)
     while not(store_2.isEmpty) or not(store_1.isEmpty):
-        if not(store_1.isEmpty) and not(before.is_in(store_1.peek)):
+        if not(store_1.isEmpty) and not(before1.is_in(store_1.peek)):
             p_u.push(store_1.pop_item)
         elif not(store_1.isEmpty) :
+            before1.a_del(store_1.peek)
             store_1.pop_item
             
-        if not(store_2.isEmpty) and not(ans.is_in(store_2.peek)):
+        if not(store_2.isEmpty) and not(current1.is_in(store_2.peek)):
             p_o.push(store_2.pop_item)
         elif not(store_2.isEmpty):
+            current1.a_del(store_2.peek)
             store_2.pop_item
-        if not(p_o.isEmpty): front+= "PO:"+str(p_o.pop_item)+" "
         
+        if not(p_o.isEmpty): front+= "PO:"+str(p_o.pop_item)+" "
 
     p_u2 = Stack()
     p_u2.reset()
-    
     while not(p_u.isEmpty):
+    
         p_u2.push(p_u.pop_item)
     while not(p_u2.isEmpty):
         front+= "PU:"+str(p_u2.pop_item)+" "
-    # while not(p_o.isEmpty):
-    #     if not(p_o.isEmpty):front+= "PO:"+str(p_o.pop_item)+" "
-    # while not(p_u.isEmpty):
-    #     if not(p_u.isEmpty):front+= "PU:"+str(p_o.pop_item)+" "
-    # while not(store_2.isEmpty) and ans.sum() < before.sum():
-    #     if not(ans.is_in(store_2.peek)):
-    #         p_u.push(store_2.pop_item)
-    #     elif not(store_2.isEmpty):
-    #         store_2.pop_item
-    #     if not(before.is_in(store_1)):
-    #         p_o.push(store_1.pop_item)
-    #     else:
-    #         store_1.pop_item
-            
-    #     front+= "PU:"+str(p_u.pop_item)+" "
     store_1.copy(ans)
     while not(store_1.isEmpty):
-        # if check:
-        #     for i in range(len(last)):
-        #         front += "PO:"+str(last.pop(i-1))+" "
-        
         output+= '['+str(store_1.pop_item)+']'
         output1 = reverse(output)
         bar = ""
         for i in range(5-ans.size_list):
             bar+='-'
+    if(store_1.isEmpty and initial == 0):
+        bar = "-----"
+        output=""
+        output1=""
         
     # print(p_o)
-    print(f"{front}=> {bar}{output1}|======|{output}{bar} => {end} KG.")
+    if before.isEmpty and ans.isEmpty :
+        print(f"{front}{bar}{output1}|======|{output}{bar} => {end} KG.")
+    else:
+        print(f"{front}=> {bar}{output1}|======|{output}{bar} => {end} KG.")
     # print("STOP")
     pass
 
@@ -162,7 +166,13 @@ p_u = Stack()
 before = Stack()
 
 def advice_plate(i):
+    
     defult = i
+    
+    if i > 250:
+        print(f"It's impossible to achieve the weight you want({defult}).")
+        return 0 
+    
     before.copy(ans)
     
     plate.reset(plate_list)
@@ -171,33 +181,24 @@ def advice_plate(i):
     while not(store.isEmpty):
         plate.push(store.pop_item)
     plate.sort()
-    if i == 20:
-        print("-----|======|----- => 20 KG.")
-        return 1
+    
+    #     print("-----|======|----- => 20 KG.")
+    #     return 1
     i = i-20 # del stick weight for 20 kg
     i=i/2
     check = i
- 
-    
-    # if not(ans.isEmpty):
-    #     if ans.sum() >check:
-            
-    #         while ans.sum() > check:
-    #             # p_u.push(ans.peek)
-    #             store.push(ans.pop_item)
-    #         i = i - ans.sum()
-    #     elif ans.sum() < check:
-    #         i = i-ans.sum()
+    if i == 0:
         
-    #     print(i)
-    # print(plate)
-    # print(store)
+        out(ans,check,before)
+        return 1
     while (i > 0) and not(plate.isEmpty):
         
         if i >= plate.peek:
             i -= plate.peek
-            # p_o.push(plate.peek)
-            ans.push(plate.pop_item)
+            if(i >= plate.peek):
+                ans.push(plate.peek)
+            else:
+                ans.push(plate.pop_item)
             
         else:
             plate.pop_item
@@ -235,9 +236,10 @@ if check:
 
 
 
-for i in sticks:
-    # print(i)
-    if advice_plate(i) ==0:
+for i in range(len(sticks)):
+    # if i!= 0 and sticks[i]==sticks[i-1]:
+    #     continue
+    if advice_plate(sticks[i]) == 0:
         break
     # print(f"status = {advice_plate(i)}")
 
