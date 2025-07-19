@@ -74,3 +74,30 @@ class Stack:
     @property
     def notEm(self):
         return not(self.isEmpty)
+
+print("*****Big leg on the right side*****")
+input = input("Enter input: ")
+num = [int(i) for i in input.split(" ")]
+out = [-1 for i in range(len(num))]
+stack = Stack()
+
+for i in range(len(num)):
+    stack.reset()
+    for j in range(i,len(num),1):
+        # print(i)
+        stack.push(j)
+    stack.stack_re
+    # print(stack)
+    # print("peek = ",stack.peek)
+    for k in range(i,len(num),1):
+        if num[i]<num[stack.peek]:
+            print(f"input[{stack.peek}]({num[stack.peek]}) is greater than input[top of stack]({i})")
+            print("Stack pop")
+            out[i]=num[stack.pop_item]
+            print(f"Output: {out}")
+            break
+        else:
+            print(f"Stack push {stack.peek} index of {num[stack.pop_item]}")
+print(f"Output: {out}")
+# print(out)
+# print(num)
