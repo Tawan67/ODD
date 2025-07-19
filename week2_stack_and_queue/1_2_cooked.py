@@ -58,15 +58,19 @@ class Stack:
     
     def sort(self):
         self.items.sort()
-    
+        
+    @property
+    def stack_re(self):
+        a = Stack()
+        while self.size_list >0:
+            a.push(self.pop_item)
+        self.copy(a)
     @property
     def IsFloat(self):
         for i in self.items:
             if is_float(str(i)):
                 return 1
         return 0
-    
-
 def reverse(string:str):
     i = [i+']' for i in string.split("]")]
     i.reverse()
@@ -122,16 +126,17 @@ for i in sticks:
     end = i
     i=(i-20)
     i=(i/2)
-    
+    initial = i
     # if not(current.isEmpty):print(current.peek," === ",(end-((past.sum*2)+20))/2)
     if not(current.isEmpty) and (end-((past.sum*2)+20))/2 == current.peek:
         # p_o.reset()
         # p_o.push(current.pop_item)
-        p_o.push(current.pop_item) # current เรียงจากน้อยไปมาก
+        current.reset()
     
+    if end > 250:
+        print(f"It's impossible to achieve the weight you want({end}).")
+        break
         
-    if not(past.isEmpty):i -= past.sum
-    #หาว่าต้องเพิ่มอีกเท่าไหร่ถึงจะทำให้น้ำหนักตรง
     plate.reset(plate_list)
     if not(past.isEmpty) and not(current.isEmpty):
         if i > past.sum:
@@ -146,8 +151,8 @@ for i in sticks:
             #     i-=temp.peek
             #     p_u.push(temp.peek)
             #     plate.push(temp.pop_item)
-            if count>6:
-                print("invalid")
+            if count>5:
+                print(f"It's impossible to achieve the weight you want({end}).")
                 break
             count+=1
             i-=plate.peek
@@ -158,7 +163,7 @@ for i in sticks:
     bar = ""
     for i in range(5-current.size_list):
             bar+='-'
-            
+    if count > 5:break       
     if not(past.isEmpty): # check which plate have to out org
         past_temp = Stack()
         pu_temp = Stack()
@@ -185,15 +190,24 @@ for i in sticks:
                 
         
     front =""
-    
+    p_u2 = Stack() 
     p_o2 = Stack() #reverse and add PU
     p_o2.reset()
+    # print(f"{i} == {p_o} == {p_u}")
+    p_u2.copy(p_u)
+    p_u2.stack_re
+    if not (p_o.isEmpty) and not(p_u.isEmpty) and p_u2.peek == p_o.peek:
+        p_o.pop_item
+        p_u2.pop_item
+        p_u2.stack_re
+        p_u.copy(p_u2)
+    
     while not(p_o.isEmpty):
         p_o2.push(p_o.pop_item)
     while not(p_o2.isEmpty):
         front+= "PO:"+str(p_o2.pop_item)+" "
         
-    p_u2 = Stack() #reverse and add PU
+   #reverse and add PU
     p_u2.reset()
     while not(p_u.isEmpty):
         p_u2.push(p_u.pop_item)
@@ -208,7 +222,9 @@ for i in sticks:
         output+= '['+str(current_temp.pop_item)+']'
         output1 = reverse(output)
     
-    
+    if initial != current.sum and len(sticks) > 0 or count > 5:
+        print(f"It's impossible to achieve the weight you want({end}).")
+        break
     # print(p_o)
     # print(p_u)
     # print(current)
@@ -220,3 +236,7 @@ for i in sticks:
     p_o.reset()
     p_u.reset()
     # current.reset()
+
+
+
+

@@ -38,24 +38,26 @@ class Stack:
                 sum+=i
             return sum
         except:
-            print("This is not pure Numberic Stack")
-            return None
+            # print("This is not pure Numberic Stack")
+            return 0
         
     def reset(self,re_list=None):
         if re_list == None:
             re_list = []
         self.items = re_list.copy()
-    
+    def notEm(self):
+        return not self.isEmpty
     def sort(self):
         self.items.sort()
     def copy(self,stack:"Stack"):
         self.reset()
         store_stack = Stack()
-        while not(stack.isEmpty):
-            self.push(stack.peek)
+        while stack.notEm:
             store_stack.push(stack.pop_item)
-        while not(store_stack.isEmpty):
+        while store_stack.notEm:
+            self.push(store_stack.peek)
             stack.push(store_stack.pop_item)
+        
     def a_del(self,ele):
         for i in range(len(self.items)):
             if ele == self.items[i]:
@@ -67,6 +69,22 @@ class Stack:
             if ele > i:
                 out_list.append(i)
         return out_list
+    
+    @property
+    def stack_re(self):
+        a = Stack()
+        while self.size_list >0:
+            a.push(self.pop_item)
+        self.copy(a)
+        return a
+        
+    @property
+    def IsFloat(self):
+        for i in self.items:
+            if is_float(str(i)):
+                return 1
+        return 0
+    
 def is_float(element):
     if not("." in element):
         return 0
@@ -97,37 +115,63 @@ def out(ans:Stack,initial,before:Stack):
     # check = len(last)>0
     
     end = (ans.sum()*2)+20
-    store_1 =Stack()
-    store_2 = Stack()
+    before_temp =Stack()
+    ans_temp = Stack()
     
-    store_2.copy(before)
-    store_1.copy(ans)
+    before_temp.copy(before)
+    ans_temp.copy(ans) #store 1 
     # print("??????????????????")
     # print(store_1)
     # print(store_2)
     # print("////////////////////")
-    while store_2.isEmpty and not(store_1.isEmpty):
-        p_u.push(store_1.pop_item)
-        front+= "PU:"+str(p_u.pop_item)+" "
+    
+    if not(before.isEmpty): # check which plate have to out org
+        past_temp = Stack()
+        pu_temp = Stack()
+        past_temp.copy(before)
+        pu_temp.copy(p_u)
+        temp2 = Stack()
+        # print("lllllllllllllll")
+        # print(pu_temp.peek,end=" == ")
+        # print(past_temp.peek)
+        while not(pu_temp.isEmpty):
+            if past_temp.peek < pu_temp.peek:
+                if past_temp.isEmpty:
+                    break
+                p_o.push(past_temp.pop_item)
+                if past_temp.isEmpty:
+                    break
+            else:
+                if not(pu_temp.isEmpty):
+                    temp2.push(pu_temp.pop_item)
+            
+                
+        while ((p_u.sum()+before.sum())-p_o.sum() != ans.sum()) and not(past_temp.isEmpty):
+            p_o.push(past_temp.pop_item)
+    
+
     
     before1 =Stack()
     before1.copy(before)
     current1 =Stack()
     current1.copy(ans)
-    while not(store_2.isEmpty) or not(store_1.isEmpty):
-        if not(store_1.isEmpty) and not(before1.is_in(store_1.peek)):
-            p_u.push(store_1.pop_item)
-        elif not(store_1.isEmpty) :
-            before1.a_del(store_1.peek)
-            store_1.pop_item
+    
+    # while not(before_temp.isEmpty) or not(ans_temp.isEmpty):
+    #     if not(ans_temp.isEmpty) and not(before1.is_in(ans_temp.peek)):
+    #         p_u.push(ans_temp.pop_item)
+    #     elif not(ans_temp.isEmpty) :
+    #         before1.a_del(ans_temp.peek)
+    #         ans_temp.pop_item
             
-        if not(store_2.isEmpty) and not(current1.is_in(store_2.peek)):
-            p_o.push(store_2.pop_item)
-        elif not(store_2.isEmpty):
-            current1.a_del(store_2.peek)
-            store_2.pop_item
-        
-        if not(p_o.isEmpty): front+= "PO:"+str(p_o.pop_item)+" "
+    #     if not(before_temp.isEmpty) and not(current1.is_in(before_temp.peek)):
+    #         p_o.push(before_temp.pop_item)
+    #     elif not(before_temp.isEmpty):
+    #         current1.a_del(before_temp.peek)
+    #         before_temp.pop_item
+    if not(p_o.isEmpty):
+        po_temp = Stack()
+        while not(p_o.isEmpty):po_temp.push(p_o.pop_item)
+        while not(po_temp.isEmpty): front+= "PO:"+str(po_temp.pop_item)+" "
 
     p_u2 = Stack()
     p_u2.reset()
@@ -135,14 +179,14 @@ def out(ans:Stack,initial,before:Stack):
         p_u2.push(p_u.pop_item)
     while not(p_u2.isEmpty):
         front+= "PU:"+str(p_u2.pop_item)+" "
-    store_1.copy(ans)
-    while not(store_1.isEmpty):
-        output+= '['+str(store_1.pop_item)+']'
+    ans_temp.copy(ans)
+    while not(ans_temp.isEmpty):
+        output+= '['+str(ans_temp.pop_item)+']'
         output1 = reverse(output)
         bar = ""
         for i in range(5-ans.size_list):
             bar+='-'
-    if(store_1.isEmpty and initial == 0):
+    if(ans_temp.isEmpty and initial == 0):
         bar = "-----"
         output=""
         output1=""
@@ -167,7 +211,7 @@ before = Stack()
 def advice_plate(i):
     
     defult = i
-    
+    previous = (before.sum*2)+20
     if i > 250:
         print(f"It's impossible to achieve the weight you want({defult}).")
         return 0 
@@ -196,7 +240,10 @@ def advice_plate(i):
             i -= plate.peek
             if(i >= plate.peek):
                 ans.push(plate.peek)
+                
+                p_u.push(plate.peek)
             else:
+                p_u.push(plate.peek)
                 ans.push(plate.pop_item)
             
         else:
